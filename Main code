@@ -4,7 +4,9 @@ import pygame
 
 pygame.init()
 
-win = pygame.display.set_mode((500,500))
+w_height = 500
+w_width = 500
+win = pygame.display.set_mode((w_width,w_height))
 pygame.display.set_caption("Test Game")
 
 x = 50
@@ -12,10 +14,13 @@ y = 50
 width = 40
 height = 60
 move_speed = 5
+jump_value = 10
+jump = False
+
 
 running = True
 while running:
-    pygame.time.delay(50)
+    pygame.time.delay(30)
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -25,14 +30,34 @@ while running:
     key = pygame.key.get_pressed()
     if key[pygame.K_ESCAPE]:
         pygame.quit()
-    if key[pygame.K_a]:
+    if key[pygame.K_a] and x>=5:
         x -= move_speed
-    if key[pygame.K_d]:
+    if key[pygame.K_d] and x<=w_width - width-5:
         x += move_speed
-    if key[pygame.K_w]:
-        y -= move_speed
-    if key[pygame.K_s]:
-        y += move_speed
+
+    if not (jump):
+        if key[pygame.K_w] and y>=5:
+            y -= move_speed
+        if key[pygame.K_s] and y<w_height - height:
+            y += move_speed
+        if key[pygame.K_SPACE]:
+            jump = True
+
+    else:
+        if jump_value >=-10:
+            if jump_value < 0:
+                    y += (jump_value ** 2) / 2
+            else:
+                y -= (jump_value ** 2) / 2
+            jump_value -= 1
+        else:
+            jump = False
+            jump_value = 10
+
+
+
+
+
 
     win.fill((0,0,0))
     pygame.draw.rect(win, (0,240,0), (x, y, width, height))

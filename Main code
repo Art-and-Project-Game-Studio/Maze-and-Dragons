@@ -1,68 +1,85 @@
-# Maze-and-dragons
-
 import pygame
 
 pygame.init()
+win = pygame.display.set_mode((1200,1000)) #оголошення вікна
+pygame.display.set_caption("Maze and Dragons") #Назва гри
 
-w_height = 500
-w_width = 500
-win = pygame.display.set_mode((w_width,w_height))
-pygame.display.set_caption("Test Game")
+walkRight = [pygame.image.load('Right.png')] #картинки персонажа, які поміщені в список
+walkLeft = [pygame.image.load('Left.png')] #картинки персонажа, які поміщені в список
+bg = pygame.image.load('background.jpg')
+playerstand = pygame.image.load('Right.png')
 
-x = 50
-y = 50
-width = 40
-height = 60
-move_speed = 5
-jump_value = 10
-jump = False
+clock = pygame.time.Clock()
 
+x = 50 # положення персонажа по x
+y = 900 # положення персонажа по x
+widht = 200 # ширина
+height = 200 # висота
+speed = 5
 
-running = True
-while running:
-    pygame.time.delay(30)
-
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            running = False
+isJump = False #для стрибків
+jumpcount = 10
 
 
-    key = pygame.key.get_pressed()
-    if key[pygame.K_ESCAPE]:
-        pygame.quit()
-    if key[pygame.K_a] and x>=5:
-        x -= move_speed
-    if key[pygame.K_d] and x<=w_width - width-5:
-        x += move_speed
+left = False
+right = False
+animcount = 0
 
-    if not (jump):
-        if key[pygame.K_w] and y>=5:
-            y -= move_speed
-        if key[pygame.K_s] and y<w_height - height:
-            y += move_speed
-        if key[pygame.K_SPACE]:
-            jump = True
+def drawWindow():
+	global animcount
+	win.blit(bg, (0,0))
+	#pygame.draw.rect(win, (0,0,255), (x, y, widht, height)) #створення квадрата, (вікно, колір, розмір)
+	if animcount + 1>=5:
+		animcount = 0
+	# для руху
+	if left:
+		win.blit(walkLeft[animcount // 5], (x, y))
+		animcount += 1
+	elif right:
+		win.blit(walkRight[animcount // 5], (x, y))
+		animcount += 1
+	else:
+		win.blit(playerstand, (x, y))
+	pygame.display.update() #оновлюєм вікно
 
-    else:
-        if jump_value >=-10:
-            if jump_value < 0:
-                    y += (jump_value ** 2) / 2
-            else:
-                y -= (jump_value ** 2) / 2
-            jump_value -= 1
-        else:
-            jump = False
-            jump_value = 10
+run = True
+while run:
+	clock.tick(30)
+	for event in pygame.event.get():
+		if event.type == pygame.QUIT:
+			run = False
 
-
-
-
-
-
-    win.fill((0,0,0))
-    pygame.draw.rect(win, (0,240,0), (x, y, width, height))
-    pygame.display.update()
-
+	drawWindow()
+	keys = pygame.key.get_pressed() #зчитуєм нажаття на кнопки
+	if keys[pygame.K_LEFT] and x > 5: #коли натискаємо ліву кнопку переміщається на 5 пікселів вліво
+		x -= speed
+		left = True
+		right = False
+	elif keys[pygame.K_RIGHT] and x < 1000 - widht - speed: #коли натискаємо праву кнопку переміщається на 5 пікселів вправо
+		x += speed
+		left = False
+		right = True
+	else:
+		left = False
+		right = False
+		animcount = 0
+	if not(isJump):
+		#if keys[pygame.K_UP] and y > 5 : #коли натискаємо верхню кнопку переміщається на 5 пікселів вверх
+		#	y -= speed
+		#if keys[pygame.K_DOWN] and y < 500 - height - speed: #коли натискаємо нижню кнопку переміщається на 5 пікселів вниз
+		#	y += speed
+		if keys[pygame.K_SPACE]: #коли натискаємо кнопку пробіл
+			isJump = True
+	else:
+		if jumpcount >= -10:
+			if jumpcount < 0:
+				y += (jumpcount ** 2) / 2
+			else:
+				y -= (jumpcount ** 2) / 2
+			jumpcount -= 1
+		else:
+			isJump = False
+			jumpcount = 10
 
 
 pygame.quit()

@@ -1,6 +1,7 @@
 import pygame
 
 pygame.init()
+
 win = pygame.display.set_mode((1200,1000)) #оголошення вікна
 pygame.display.set_caption("Maze and Dragons") #Назва гри
 
@@ -12,7 +13,7 @@ playerstand = pygame.image.load('Right.png')
 clock = pygame.time.Clock()
 
 x = 50 # положення персонажа по x
-y = 900 # положення персонажа по x
+y = 850 # положення персонажа по x
 widht = 200 # ширина
 height = 200 # висота
 speed = 5
@@ -25,10 +26,11 @@ left = False
 right = False
 animcount = 0
 
+main = True
+
 def drawWindow():
 	global animcount
 	win.blit(bg, (0,0))
-	#pygame.draw.rect(win, (0,0,255), (x, y, widht, height)) #створення квадрата, (вікно, колір, розмір)
 	if animcount + 1>=5:
 		animcount = 0
 	# для руху
@@ -42,15 +44,20 @@ def drawWindow():
 		win.blit(playerstand, (x, y))
 	pygame.display.update() #оновлюєм вікно
 
-run = True
-while run:
+
+#Maim loop
+while main == True:
 	clock.tick(30)
 	for event in pygame.event.get():
 		if event.type == pygame.QUIT:
-			run = False
+			pygame.quit()
+			main = False
 
 	drawWindow()
 	keys = pygame.key.get_pressed() #зчитуєм нажаття на кнопки
+	if keys[pygame.K_ESCAPE]:
+			pygame.quit()
+			main = False
 	if keys[pygame.K_LEFT] and x > 5: #коли натискаємо ліву кнопку переміщається на 5 пікселів вліво
 		x -= speed
 		left = True
@@ -80,6 +87,3 @@ while run:
 		else:
 			isJump = False
 			jumpcount = 10
-
-
-pygame.quit()
